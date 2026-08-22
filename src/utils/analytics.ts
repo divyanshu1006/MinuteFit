@@ -7,34 +7,29 @@ declare global {
   }
 }
 
-// Default or environment-provided Measurement ID
-export const GA_MEASUREMENT_ID =
-  (import.meta.env.VITE_GA_MEASUREMENT_ID as string) || 'G-MINUTEFIT';
+export const GA_MEASUREMENT_ID = 'G-KZW02TRJZE';
 
 /**
- * Initialize Google Analytics (gtag.js)
+ * Initialize Google Analytics (gtag.js) if not already initialized in index.html
  */
 export function initGA(measurementId: string = GA_MEASUREMENT_ID): void {
   if (typeof window === 'undefined') return;
 
-  // Don't inject twice
-  if (document.getElementById('ga-gtag-script')) return;
-
   window.dataLayer = window.dataLayer || [];
-  window.gtag = function gtag() {
-    window.dataLayer.push(arguments);
-  };
+  if (!window.gtag) {
+    window.gtag = function gtag() {
+      window.dataLayer.push(arguments);
+    };
+  }
 
-  window.gtag('js', new Date());
-  window.gtag('config', measurementId, {
-    send_page_view: false, // Page views handled manually via React Router
-  });
-
-  const script = document.createElement('script');
-  script.id = 'ga-gtag-script';
-  script.async = true;
-  script.src = `https://www.googletagmanager.com/gtag/js?id=${measurementId}`;
-  document.head.appendChild(script);
+  // Ensure script is present if not loaded in HTML
+  if (!document.getElementById('ga-gtag-script')) {
+    const script = document.createElement('script');
+    script.id = 'ga-gtag-script';
+    script.async = true;
+    script.src = `https://www.googletagmanager.com/gtag/js?id=${measurementId}`;
+    document.head.appendChild(script);
+  }
 }
 
 /**
@@ -46,6 +41,7 @@ export function trackPageView(path: string, title?: string): void {
   window.gtag('event', 'page_view', {
     page_path: path,
     page_title: title || document.title,
+    send_to: GA_MEASUREMENT_ID,
   });
 }
 
@@ -55,5 +51,8 @@ export function trackPageView(path: string, title?: string): void {
 export function trackEvent(eventName: string, eventParams: Record<string, any> = {}): void {
   if (typeof window === 'undefined' || !window.gtag) return;
 
-  window.gtag('event', eventName, eventParams);
+  window.gtag('event', eventName, {
+    ...eventParams,
+    send_to: GA_MEASUREMENT_ID,
+  });
 }
