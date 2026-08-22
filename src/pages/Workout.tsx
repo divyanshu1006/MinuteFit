@@ -143,9 +143,9 @@ export default function Workout() {
   const { phase, currentRound, currentExerciseIndex, isPaused } = timer.timerState
   
   return (
-    <div className="min-h-screen bg-[#0E1F19] text-white flex flex-col justify-between select-none pb-safe">
+    <div className="h-[100dvh] max-h-[100dvh] overflow-hidden bg-[#0E1F19] text-white flex flex-col justify-between select-none pb-safe">
       {/* Top Total Progress Bar */}
-      <div className="pt-3 px-5">
+      <div className="pt-3 px-5 shrink-0">
         <ProgressBar progress={timer.progress} phase={phase} />
       </div>
       
