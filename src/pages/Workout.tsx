@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'motion/react'
-import { Pause, Play, X } from 'lucide-react'
+import { Pause, Play, X, Volume2, VolumeX } from 'lucide-react'
 import { useWorkoutTimer } from '@/hooks/useWorkoutTimer'
 import { useSound } from '@/hooks/useSound'
 import { useSpeech } from '@/hooks/useSpeech'
@@ -22,7 +22,7 @@ import QuitDialog from '@/components/QuitDialog'
 
 export default function Workout() {
   const navigate = useNavigate()
-  const { settings } = useSettings()
+  const { settings, toggleVoice, toggleSound } = useSettings()
   const { playBeep, playTransition, playComplete } = useSound(settings.soundEnabled)
   const { speak, cancel: cancelSpeech } = useSpeech(settings.voiceEnabled)
   const { addWorkout, getHistory, getTotalWorkouts } = useWorkoutHistory()
@@ -159,13 +159,48 @@ export default function Workout() {
   
   return (
     <div className="h-[100dvh] max-h-[100dvh] overflow-hidden bg-[#0E1F19] text-white flex flex-col justify-between select-none pb-safe">
-      {/* Top Total Progress Bar */}
-      <div className="pt-3 px-5 shrink-0">
+      {/* Top Bar: Progress & Quick Controls */}
+      <div className="pt-3 px-4 sm:px-6 shrink-0 space-y-2">
+        <div className="flex items-center justify-between text-xs text-[#8FA89E]">
+          <span className="font-extrabold uppercase tracking-wider text-[11px] text-[#27B68C]">
+            MinuteFit • 20 Min Routine
+          </span>
+
+          <div className="flex items-center gap-2">
+            {/* Quick Audio Mute / Unmute Toggle */}
+            <button
+              onClick={() => {
+                toggleVoice()
+                toggleSound()
+              }}
+              aria-label={settings.voiceEnabled || settings.soundEnabled ? "Mute audio" : "Unmute audio"}
+              className="p-1.5 rounded-full bg-[#183127] hover:bg-[#1E3E32] text-[#8EA89E] transition-colors cursor-pointer border border-[#234537]"
+            >
+              {settings.voiceEnabled || settings.soundEnabled ? (
+                <Volume2 className="w-4 h-4 text-[#27B68C]" />
+              ) : (
+                <VolumeX className="w-4 h-4 text-neutral-400" />
+              )}
+            </button>
+
+            {/* Quick Quit Button */}
+            <button
+              onClick={() => { timer.pause(); setShowQuit(true) }}
+              aria-label="Exit workout"
+              className="p-1.5 rounded-full bg-[#183127] hover:bg-rose-500/20 text-[#8EA89E] hover:text-rose-400 transition-colors cursor-pointer border border-[#234537]"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+
+        {/* Continuous Session Progress Bar */}
         <ProgressBar progress={timer.progress} phase={phase} />
       </div>
       
-      <div className="flex-1 flex flex-col justify-around px-6 py-4 max-w-lg mx-auto w-full">
-        {/* Exercise Header */}
+      {/* Central Workout Stage */}
+      <div className="flex-1 flex flex-col justify-around px-5 py-3 max-w-lg mx-auto w-full">
+        {/* Exercise & Form Guidance Header */}
         <ExerciseHeader 
           exercise={timer.currentExercise} 
           nextExercise={timer.nextExercise}
@@ -173,11 +208,11 @@ export default function Workout() {
         />
         
         {/* Main Digital Timer */}
-        <div className="flex items-center justify-center my-2">
+        <div className="flex items-center justify-center my-1">
           <Timer seconds={timer.timerState.phaseRemaining} phase={phase} />
         </div>
 
-        {/* Workout Round/Exercise & Next Info */}
+        {/* Milestone & Round Counter */}
         <WorkoutInfo 
           currentRound={currentRound} 
           totalRounds={workout.rounds} 
@@ -188,13 +223,17 @@ export default function Workout() {
         />
 
         {/* Controls */}
-        <div className="flex justify-center items-center gap-6 mt-4">
+        <div className="flex justify-center items-center gap-6 mt-2">
           <button 
             onClick={() => isPaused ? timer.resume() : timer.pause()}
             aria-label={isPaused ? "Resume workout" : "Pause workout"}
             className="w-16 h-16 rounded-full bg-[#183127] border border-[#234537] flex items-center justify-center text-white active:scale-95 transition-transform hover:bg-[#1E3E32] shadow-lg cursor-pointer"
           >
-            {isPaused ? <Play className="w-7 h-7 ml-0.5 fill-current text-[#27B68C]" /> : <Pause className="w-7 h-7 fill-current text-white" />}
+            {isPaused ? (
+              <Play className="w-7 h-7 ml-0.5 fill-current text-[#27B68C]" />
+            ) : (
+              <Pause className="w-7 h-7 fill-current text-white" />
+            )}
           </button>
           
           <button 

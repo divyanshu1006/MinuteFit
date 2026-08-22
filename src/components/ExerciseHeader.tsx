@@ -16,26 +16,28 @@ export default function ExerciseHeader({ exercise, nextExercise, phase }: Exerci
   const activeExerciseForInfo = isRest && nextExercise ? nextExercise : exercise;
 
   return (
-    <div className="flex flex-col items-center text-center px-4 select-none">
-      {/* Phase Badge */}
+    <div className="flex flex-col items-center text-center px-4 select-none w-full max-w-md mx-auto">
+      {/* Phase Badge with Original High-Contrast Colors */}
       <div
         className={cn(
-          "mb-3 rounded-full px-4 py-1 text-xs font-black uppercase tracking-widest transition-colors duration-300",
-          isRest ? "bg-cyan-950 text-cyan-400 border border-cyan-800" : "bg-orange-950 text-orange-400 border border-orange-800"
+          "mb-3 rounded-full px-4 py-1 text-xs font-black uppercase tracking-widest transition-colors duration-300 shadow-xs",
+          isRest 
+            ? "bg-cyan-950 text-cyan-400 border border-cyan-800" 
+            : "bg-orange-950 text-orange-400 border border-orange-800"
         )}
       >
         {isRest ? "REST PHASE (20s)" : "WORK PHASE (40s)"}
       </div>
 
-      {/* Main Exercise Title */}
+      {/* Main Exercise Title & Next Cue */}
       <AnimatePresence mode="wait">
         <motion.div
-          key={isRest ? "rest-title" : exercise.name}
+          key={isRest ? `rest-${nextExercise?.name}` : exercise.name}
           initial={{ opacity: 0, y: -6 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 6 }}
           transition={{ duration: 0.2 }}
-          className="flex flex-col items-center"
+          className="flex flex-col items-center min-h-[72px] justify-center"
         >
           {isRest ? (
             <>
@@ -45,7 +47,9 @@ export default function ExerciseHeader({ exercise, nextExercise, phase }: Exerci
               {nextExercise && (
                 <div className="mt-1 text-lg sm:text-xl font-bold text-white flex items-center gap-1.5">
                   <span className="text-neutral-400 font-normal">Next:</span>
-                  <span className="text-orange-400 underline decoration-orange-500/50 underline-offset-4">{nextExercise.name}</span>
+                  <span className="text-orange-400 underline decoration-orange-500/50 underline-offset-4 font-bold">
+                    {nextExercise.name}
+                  </span>
                 </div>
               )}
             </>
@@ -60,7 +64,8 @@ export default function ExerciseHeader({ exercise, nextExercise, phase }: Exerci
       {/* Expandable Exercise Technique Tip */}
       <button
         onClick={() => setShowInstruction((prev) => !prev)}
-        className="mt-3 flex items-center gap-1.5 text-xs font-medium text-neutral-400 transition-colors hover:text-white bg-neutral-900/80 px-3 py-1.5 rounded-full border border-neutral-800"
+        className="mt-3 flex items-center gap-1.5 text-xs font-medium text-neutral-400 transition-colors hover:text-white bg-neutral-900/80 px-3.5 py-1.5 rounded-full border border-neutral-800 cursor-pointer"
+        aria-expanded={showInstruction}
       >
         <Info size={14} className="text-neutral-400" />
         <span>{showInstruction ? "Hide form tips" : `Form tips: ${activeExerciseForInfo.name}`}</span>
@@ -72,10 +77,10 @@ export default function ExerciseHeader({ exercise, nextExercise, phase }: Exerci
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="mt-3 max-w-sm overflow-hidden text-xs text-neutral-300 bg-neutral-900/95 p-3 rounded-xl border border-neutral-800 leading-relaxed shadow-lg"
+            className="mt-3 w-full max-w-sm overflow-hidden text-xs text-neutral-300 bg-neutral-900/95 p-3.5 rounded-xl border border-neutral-800 leading-relaxed shadow-lg text-left"
           >
             <p className="font-semibold text-neutral-200 mb-1">{activeExerciseForInfo.name} Form:</p>
-            {activeExerciseForInfo.instruction}
+            <p className="text-neutral-300 font-normal">{activeExerciseForInfo.instruction}</p>
           </motion.div>
         )}
       </AnimatePresence>
