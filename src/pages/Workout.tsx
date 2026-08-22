@@ -11,6 +11,7 @@ import { useSettings } from '@/hooks/useSettings'
 import { workout } from '@/data/workout'
 import type { Difficulty, WorkoutPhase } from '@/types/workout'
 import { getLocalDateString } from '@/utils/dates'
+import { trackEvent } from '@/utils/analytics'
 import Timer from '@/components/Timer'
 import Countdown from '@/components/Countdown'
 import ExerciseHeader from '@/components/ExerciseHeader'
@@ -82,6 +83,11 @@ export default function Workout() {
     setInternalPhase('COMPLETED')
     playComplete()
     speak("Workout complete. Twenty minutes done.")
+    trackEvent('workout_complete', {
+      duration_minutes: 20,
+      total_exercises: 5,
+      total_rounds: 4,
+    })
   }, [playComplete, speak])
 
   const timer = useWorkoutTimer(
@@ -100,6 +106,10 @@ export default function Workout() {
   const handleCountdownComplete = () => {
     setInternalPhase('ACTIVE')
     timer.start()
+    trackEvent('workout_start', {
+      workout_name: 'Twenty',
+      duration_minutes: 20,
+    })
   }
 
   const handleLog = (difficulty: Difficulty) => {
@@ -111,6 +121,11 @@ export default function Workout() {
       rounds: workout.rounds,
       exercises: workout.exercises.length,
       difficulty
+    })
+    trackEvent('workout_logged', {
+      difficulty,
+      streak: currentStreak + 1,
+      total_workouts: totalWorkouts + 1,
     })
   }
 

@@ -1,6 +1,8 @@
+import { useEffect } from 'react'
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import { AnimatePresence, motion } from 'motion/react'
 import { SettingsProvider } from '@/hooks/useSettings'
+import { initGA, trackPageView } from '@/utils/analytics'
 import Home from '@/pages/Home'
 import Workout from '@/pages/Workout'
 import History from '@/pages/History'
@@ -10,6 +12,16 @@ import Navigation from '@/components/Navigation'
 function AppContent() {
   const location = useLocation()
   const isWorkout = location.pathname === '/workout'
+
+  // Initialize GA once on load
+  useEffect(() => {
+    initGA()
+  }, [])
+
+  // Track page views on route change
+  useEffect(() => {
+    trackPageView(location.pathname)
+  }, [location.pathname])
 
   return (
     <div className="flex flex-col min-h-screen">
