@@ -26,10 +26,14 @@ export const SettingsProvider: React.FC<{ children: ReactNode }> = ({ children }
     saveToStorage('settings', settings);
 
     const applyTheme = (theme: 'light' | 'dark' | 'system') => {
+      if (typeof document === 'undefined') return;
       const root = document.documentElement;
       root.classList.remove('light', 'dark');
       if (theme === 'system') {
-        const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const systemPrefersDark =
+          typeof window !== 'undefined' &&
+          window.matchMedia &&
+          window.matchMedia('(prefers-color-scheme: dark)').matches;
         root.classList.add(systemPrefersDark ? 'dark' : 'light');
       } else {
         root.classList.add(theme);
@@ -39,22 +43,34 @@ export const SettingsProvider: React.FC<{ children: ReactNode }> = ({ children }
     applyTheme(settings.theme);
 
     let mediaQuery: MediaQueryList | null = null;
-    const handleChange = (e: MediaQueryListEvent) => {
-      if (settings.theme === 'system') {
+    const handleChange = (e: MediaQueryListEvent | MediaQueryList) => {
+      if (settings.theme === 'system' && typeof document !== 'undefined') {
         const root = document.documentElement;
         root.classList.remove('light', 'dark');
         root.classList.add(e.matches ? 'dark' : 'light');
       }
     };
 
-    if (settings.theme === 'system') {
-      mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-      mediaQuery.addEventListener('change', handleChange);
+    if (settings.theme === 'system' && typeof window !== 'undefined' && window.matchMedia) {
+      try {
+        mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+        if (mediaQuery.addEventListener) {
+          mediaQuery.addEventListener('change', handleChange);
+        } else if ((mediaQuery as any).addListener) {
+          (mediaQuery as any).addListener(handleChange);
+        }
+      } catch (err) {
+        console.warn('[MinuteFit Settings] mediaQuery listener error:', err);
+      }
     }
 
     return () => {
       if (mediaQuery) {
-        mediaQuery.removeEventListener('change', handleChange);
+        if (mediaQuery.removeEventListener) {
+          mediaQuery.removeEventListener('change', handleChange);
+        } else if ((mediaQuery as any).removeListener) {
+          (mediaQuery as any).removeListener(handleChange);
+        }
       }
     };
   }, [settings]);
