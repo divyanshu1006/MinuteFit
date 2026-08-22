@@ -1,0 +1,17 @@
+{
+  "name": "MinuteFit",
+  "short_name": "MinuteFit",
+  "description": "20-minute full-body workout companion",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0a",
+  "theme_color": "#0a0a0a",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
