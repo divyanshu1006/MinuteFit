@@ -2,6 +2,7 @@ import { motion } from 'motion/react'
 import { Check, Calendar, Clock, Trophy } from 'lucide-react'
 import { useWorkoutHistory } from '@/hooks/useWorkoutHistory'
 import { formatDate } from '@/utils/dates'
+import Logo from '@/components/Logo'
 
 export default function History() {
   const { getHistory, getTotalWorkouts, getTotalMinutes } = useWorkoutHistory()
@@ -23,9 +24,12 @@ export default function History() {
     <div className="min-h-screen bg-gradient-to-b from-[#EBF7F2] via-[#F5FAF7] to-[#FFF6F0] text-[#143329] px-5 pt-8 pb-28">
       <div className="max-w-md mx-auto space-y-6">
         {/* Header */}
-        <div className="space-y-1">
-          <p className="text-[11px] font-bold tracking-widest uppercase text-[#68857B]">Activity Log</p>
-          <h1 className="text-2xl sm:text-3xl font-black text-[#143329] tracking-tight">Workout History</h1>
+        <div className="flex items-center justify-between">
+          <div className="space-y-1">
+            <p className="text-[11px] font-bold tracking-widest uppercase text-[#68857B]">Activity Log</p>
+            <h1 className="text-2xl sm:text-3xl font-black text-[#143329] tracking-tight">Workout History</h1>
+          </div>
+          <Logo size="sm" showText={false} />
         </div>
 
         {/* Aggregate Stats Pill Cards */}

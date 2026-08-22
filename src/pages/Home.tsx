@@ -4,6 +4,7 @@ import { useWorkoutHistory } from '@/hooks/useWorkoutHistory'
 import { useStreak } from '@/hooks/useStreak'
 import { formatDate } from '@/utils/dates'
 import { ArrowRight, Flame, Trophy, Clock, Sparkles, Dumbbell } from 'lucide-react'
+import Logo from '@/components/Logo'
 
 export default function Home() {
   const navigate = useNavigate()
@@ -42,19 +43,7 @@ export default function Home() {
       >
         {/* Top Header Bar */}
         <motion.header variants={itemVariants} className="flex items-center justify-between mb-6 md:mb-10">
-          <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-2xl bg-[#27B68C] flex items-center justify-center text-white font-black text-base shadow-[0_8px_20px_rgba(39,182,140,0.3)]">
-              20
-            </div>
-            <div>
-              <div className="flex items-center gap-1.5">
-                <span className="text-xs font-black tracking-widest uppercase text-[#27B68C]">MinuteFit</span>
-                <span className="w-1 h-1 rounded-full bg-[#27B68C]" />
-                <span className="text-[11px] font-semibold text-[#68857B]">Daily</span>
-              </div>
-              <h2 className="text-sm font-black text-[#143329]">Bodyweight Companion</h2>
-            </div>
-          </div>
+          <Logo size="md" />
 
           <div className="flex items-center gap-2">
             {currentStreak > 0 && (

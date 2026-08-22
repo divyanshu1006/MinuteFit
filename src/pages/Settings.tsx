@@ -3,6 +3,7 @@ import { motion } from 'motion/react'
 import { useSettings } from '@/hooks/useSettings'
 import { useWorkoutHistory } from '@/hooks/useWorkoutHistory'
 import { Volume2, Music, SunMoon, RotateCcw, ShieldAlert } from 'lucide-react'
+import Logo from '@/components/Logo'
 
 function Toggle({ checked, onChange }: { checked: boolean; onChange: () => void }) {
   return (
@@ -42,9 +43,12 @@ export default function Settings() {
     <div className="min-h-screen bg-gradient-to-b from-[#EBF7F2] via-[#F5FAF7] to-[#FFF6F0] text-[#143329] px-5 pt-8 pb-28">
       <div className="max-w-md mx-auto space-y-6">
         {/* Header */}
-        <div className="space-y-1">
-          <p className="text-[11px] font-bold tracking-widest uppercase text-[#68857B]">Preferences</p>
-          <h1 className="text-2xl sm:text-3xl font-black text-[#143329] tracking-tight">Settings</h1>
+        <div className="flex items-center justify-between">
+          <div className="space-y-1">
+            <p className="text-[11px] font-bold tracking-widest uppercase text-[#68857B]">Preferences</p>
+            <h1 className="text-2xl sm:text-3xl font-black text-[#143329] tracking-tight">Settings</h1>
+          </div>
+          <Logo size="sm" showText={false} />
         </div>
 
         {/* Audio Preferences Card */}
