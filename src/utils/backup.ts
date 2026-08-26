@@ -13,9 +13,9 @@ export interface BackupData {
 }
 
 /**
- * Export all MinuteFit data as a downloadable JSON file.
+ * Generate backup data object.
  */
-export function exportBackupFile(): void {
+export function generateBackupData(): BackupData {
   const history = loadFromStorage<WorkoutLog[]>('history', [])
   const settings = loadFromStorage<AppSettings>('settings', {
     voiceEnabled: true,
@@ -23,7 +23,7 @@ export function exportBackupFile(): void {
     theme: 'system'
   })
 
-  const backup: BackupData = {
+  return {
     app: 'MinuteFit',
     version: '1.0.0',
     exportedAt: new Date().toISOString(),
@@ -32,7 +32,13 @@ export function exportBackupFile(): void {
       settings
     }
   }
+}
 
+/**
+ * Export all MinuteFit data as a downloadable JSON file.
+ */
+export function exportBackupFile(): void {
+  const backup = generateBackupData()
   const jsonStr = JSON.stringify(backup, null, 2)
   const blob = new Blob([jsonStr], { type: 'application/json' })
   const url = URL.createObjectURL(blob)
@@ -44,6 +50,60 @@ export function exportBackupFile(): void {
   link.click()
   document.body.removeChild(link)
   URL.revokeObjectURL(url)
+}
+
+/**
+ * Share backup file directly to Google Drive, iCloud, or other cloud storage via Web Share API.
+ * Gracefully falls back to download if Web Share is unavailable.
+ */
+export async function shareBackupToCloud(): Promise<{
+  success: boolean
+  method: 'share' | 'download'
+  message: string
+}> {
+  const backup = generateBackupData()
+  const jsonStr = JSON.stringify(backup, null, 2)
+  const fileName = `minutefit-backup-${getLocalDateString()}.json`
+  const file = new File([jsonStr], fileName, { type: 'application/json' })
+
+  // Check if native Web Share with files is supported
+  if (typeof navigator !== 'undefined' && navigator.canShare && navigator.canShare({ files: [file] })) {
+    try {
+      await navigator.share({
+        title: 'MinuteFit Workout Backup',
+        text: 'MinuteFit backup file containing workout logs and streaks.',
+        files: [file]
+      })
+      return {
+        success: true,
+        method: 'share',
+        message: 'Saved via share sheet (Google Drive / Cloud)!'
+      }
+    } catch (err: any) {
+      if (err.name === 'AbortError') {
+        return {
+          success: false,
+          method: 'share',
+          message: 'Share cancelled.'
+        }
+      }
+      // Fallback to download on unexpected error
+      exportBackupFile()
+      return {
+        success: true,
+        method: 'download',
+        message: 'Downloaded backup file to your device.'
+      }
+    }
+  } else {
+    // Fallback directly to file download
+    exportBackupFile()
+    return {
+      success: true,
+      method: 'download',
+      message: 'Downloaded backup file. You can now upload it directly to Google Drive.'
+    }
+  }
 }
 
 /**
