@@ -11,7 +11,6 @@ import {
   Moon, 
   Monitor, 
   RotateCcw, 
-  ShieldCheck, 
   Play, 
   Check, 
   AlertTriangle,
@@ -35,7 +34,7 @@ function Toggle({
       aria-checked={checked}
       aria-label={label}
       className={`relative w-12 h-7 rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#27B68C] focus:ring-offset-2 cursor-pointer p-0.5 ${
-        checked ? 'bg-[#27B68C]' : 'bg-[#D1E0D9]'
+        checked ? 'bg-[#27B68C]' : 'bg-[#D1E0D9] dark:bg-[#233F36]'
       }`}
     >
       <motion.div
@@ -86,24 +85,24 @@ export default function Settings() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#EBF7F2] via-[#F5FAF7] to-[#FFF6F0] text-[#143329] px-5 pt-8 pb-32">
+    <div className="min-h-screen bg-gradient-to-b from-[#EBF7F2] via-[#F5FAF7] to-[#FFF6F0] dark:from-[#0B1A15] dark:via-[#0F221B] dark:to-[#122A21] text-[#143329] dark:text-[#E8F4F0] px-5 pt-8 pb-32 transition-colors duration-200">
       <div className="max-w-md mx-auto space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="space-y-1">
-            <p className="text-[11px] font-bold tracking-widest uppercase text-[#68857B]">Preferences</p>
-            <h1 className="text-2xl sm:text-3xl font-black text-[#143329] tracking-tight">Settings</h1>
+            <p className="text-[11px] font-bold tracking-widest uppercase text-[#68857B] dark:text-[#8EA89E]">Preferences</p>
+            <h1 className="text-2xl sm:text-3xl font-black text-[#143329] dark:text-white tracking-tight">Settings</h1>
           </div>
           <Logo size="sm" showText={false} />
         </div>
 
         {/* Audio Preferences Card */}
-        <div className="rounded-[28px] bg-white p-5 border border-white/80 shadow-[0_10px_30px_rgba(20,55,42,0.04)] space-y-5">
+        <div className="rounded-[28px] bg-white dark:bg-[#142A21] p-5 border border-white/80 dark:border-[#234537] shadow-[0_10px_30px_rgba(20,55,42,0.04)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.25)] space-y-5">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-black uppercase tracking-wider text-[#143329]">
+            <span className="text-xs font-black uppercase tracking-wider text-[#143329] dark:text-white">
               Audio & Coaching
             </span>
-            <span className="text-[11px] font-bold text-[#68857B]">
+            <span className="text-[11px] font-bold text-[#68857B] dark:text-[#8EA89E]">
               Hands-free guidance
             </span>
           </div>
@@ -112,12 +111,12 @@ export default function Settings() {
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-[#EBF7F2] flex items-center justify-center text-[#27B68C]">
+                <div className="w-10 h-10 rounded-2xl bg-[#EBF7F2] dark:bg-[#1C382D] flex items-center justify-center text-[#27B68C]">
                   <Volume2 className="w-5 h-5" />
                 </div>
                 <div>
-                  <div className="font-extrabold text-sm text-[#143329]">Spoken Voice Coach</div>
-                  <div className="text-xs text-[#68857B]">Announces exercises, rounds & cues</div>
+                  <div className="font-extrabold text-sm text-[#143329] dark:text-white">Spoken Voice Coach</div>
+                  <div className="text-xs text-[#68857B] dark:text-[#8EA89E]">Announces exercises, rounds & cues</div>
                 </div>
               </div>
               <Toggle 
@@ -132,7 +131,7 @@ export default function Settings() {
                 <button
                   onClick={handleTestVoice}
                   disabled={testVoiceActive}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#F0F8F4] hover:bg-[#E3F4EC] text-[#27B68C] text-xs font-bold transition-colors cursor-pointer"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#F0F8F4] dark:bg-[#1C382D] hover:bg-[#E3F4EC] dark:hover:bg-[#234537] text-[#27B68C] text-xs font-bold transition-colors cursor-pointer"
                 >
                   <Play className="w-3 h-3 fill-current" />
                   <span>{testVoiceActive ? 'Playing sample...' : 'Test voice cue'}</span>
@@ -141,18 +140,18 @@ export default function Settings() {
             )}
           </div>
           
-          <div className="h-px bg-[#EEF5F1]" />
+          <div className="h-px bg-[#EEF5F1] dark:bg-[#234537]" />
 
           {/* Sound Effects Toggle */}
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-[#FFF0E8] flex items-center justify-center text-[#FF7754]">
+                <div className="w-10 h-10 rounded-2xl bg-[#FFF0E8] dark:bg-[#38231C] flex items-center justify-center text-[#FF7754]">
                   <Music className="w-5 h-5" />
                 </div>
                 <div>
-                  <div className="font-extrabold text-sm text-[#143329]">Sound Effects</div>
-                  <div className="text-xs text-[#68857B]">Interval countdown beeps & bells</div>
+                  <div className="font-extrabold text-sm text-[#143329] dark:text-white">Sound Effects</div>
+                  <div className="text-xs text-[#68857B] dark:text-[#8EA89E]">Interval countdown beeps & bells</div>
                 </div>
               </div>
               <Toggle 
@@ -167,7 +166,7 @@ export default function Settings() {
                 <button
                   onClick={handleTestSound}
                   disabled={testSoundActive}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#FFF4EE] hover:bg-[#FFEADF] text-[#FF7754] text-xs font-bold transition-colors cursor-pointer"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#FFF4EE] dark:bg-[#38231C] hover:bg-[#FFEADF] dark:hover:bg-[#4A2D23] text-[#FF7754] text-xs font-bold transition-colors cursor-pointer"
                 >
                   <Play className="w-3 h-3 fill-current" />
                   <span>{testSoundActive ? 'Playing chime...' : 'Test chime'}</span>
@@ -178,17 +177,17 @@ export default function Settings() {
         </div>
 
         {/* Appearance Card */}
-        <div className="rounded-[28px] bg-white p-5 border border-white/80 shadow-[0_10px_30px_rgba(20,55,42,0.04)] space-y-3">
+        <div className="rounded-[28px] bg-white dark:bg-[#142A21] p-5 border border-white/80 dark:border-[#234537] shadow-[0_10px_30px_rgba(20,55,42,0.04)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.25)] space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-black uppercase tracking-wider text-[#143329]">
+            <span className="text-xs font-black uppercase tracking-wider text-[#143329] dark:text-white">
               Appearance
             </span>
-            <span className="text-[11px] font-bold text-[#68857B] capitalize">
+            <span className="text-[11px] font-bold text-[#68857B] dark:text-[#8EA89E] capitalize">
               {settings.theme} Mode
             </span>
           </div>
 
-          <div className="grid grid-cols-3 gap-2 p-1.5 bg-[#F1F7F4] rounded-2xl border border-[#E3EEE9]">
+          <div className="grid grid-cols-3 gap-2 p-1.5 bg-[#F1F7F4] dark:bg-[#10221B] rounded-2xl border border-[#E3EEE9] dark:border-[#234537]">
             {[
               { id: 'light', label: 'Light', icon: Sun },
               { id: 'dark', label: 'Dark', icon: Moon },
@@ -200,7 +199,7 @@ export default function Settings() {
                 className={`py-2.5 px-3 flex items-center justify-center gap-1.5 text-xs font-extrabold rounded-xl transition-all cursor-pointer ${
                   settings.theme === id 
                     ? 'bg-[#27B68C] text-white shadow-sm' 
-                    : 'text-[#68857B] hover:text-[#143329] hover:bg-white/60'
+                    : 'text-[#68857B] dark:text-[#8EA89E] hover:text-[#143329] dark:hover:text-white hover:bg-white/60 dark:hover:bg-white/5'
                 }`}
               >
                 <Icon className="w-3.5 h-3.5" />
@@ -211,23 +210,23 @@ export default function Settings() {
         </div>
 
         {/* Privacy & Storage Guarantee Card */}
-        <div className="rounded-[24px] bg-[#EAF5F0] p-4.5 border border-[#D5ECE1] flex items-start gap-3">
-          <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center text-[#27B68C] shrink-0 shadow-2xs">
+        <div className="rounded-[24px] bg-[#EAF5F0] dark:bg-[#10241C] p-4.5 border border-[#D5ECE1] dark:border-[#234537] flex items-start gap-3">
+          <div className="w-8 h-8 rounded-full bg-white dark:bg-[#1C382D] flex items-center justify-center text-[#27B68C] shrink-0 shadow-2xs">
             <Lock className="w-4 h-4" />
           </div>
           <div className="space-y-0.5 text-xs">
-            <div className="font-extrabold text-[#143329]">100% Private & Local</div>
-            <p className="text-[#597B6F] leading-relaxed">
+            <div className="font-extrabold text-[#143329] dark:text-white">100% Private & Local</div>
+            <p className="text-[#597B6F] dark:text-[#8EA89E] leading-relaxed">
               Your workout logs, streaks, and preferences never leave this browser. No external tracking or account required.
             </p>
           </div>
         </div>
 
         {/* Data Management & History Reset */}
-        <div className="rounded-[28px] bg-white p-5 border border-white/80 shadow-[0_10px_30px_rgba(20,55,42,0.04)] space-y-3">
+        <div className="rounded-[28px] bg-white dark:bg-[#142A21] p-5 border border-white/80 dark:border-[#234537] shadow-[0_10px_30px_rgba(20,55,42,0.04)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.25)] space-y-3">
           <div className="flex items-center gap-2 text-rose-500">
             <AlertTriangle className="w-4 h-4" />
-            <span className="font-extrabold text-xs uppercase tracking-wider text-[#143329]">Data Management</span>
+            <span className="font-extrabold text-xs uppercase tracking-wider text-[#143329] dark:text-white">Data Management</span>
           </div>
 
           <AnimatePresence mode="wait">
@@ -238,7 +237,7 @@ export default function Settings() {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 onClick={handleResetClick}
-                className="w-full py-3.5 px-4 rounded-2xl font-extrabold text-xs tracking-wider uppercase bg-[#FFF1F0] text-rose-600 hover:bg-rose-100 border border-rose-200 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full py-3.5 px-4 rounded-2xl font-extrabold text-xs tracking-wider uppercase bg-[#FFF1F0] dark:bg-rose-950/30 text-rose-600 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-900/40 border border-rose-200 dark:border-rose-900/50 transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
                 <span>Reset Workout History</span>
@@ -251,9 +250,9 @@ export default function Settings() {
                 initial={{ opacity: 0, scale: 0.98 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0 }}
-                className="p-4 rounded-2xl bg-rose-50 border border-rose-200 space-y-3"
+                className="p-4 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 space-y-3"
               >
-                <div className="text-xs text-rose-800 font-semibold leading-relaxed">
+                <div className="text-xs text-rose-800 dark:text-rose-300 font-semibold leading-relaxed">
                   Are you sure? This will permanently delete all completed workouts and reset your streak.
                 </div>
                 <div className="flex items-center gap-2">
@@ -265,7 +264,7 @@ export default function Settings() {
                   </button>
                   <button
                     onClick={cancelReset}
-                    className="py-2.5 px-4 rounded-xl bg-white hover:bg-rose-100 text-[#556961] font-bold text-xs border border-rose-200 transition-colors cursor-pointer"
+                    className="py-2.5 px-4 rounded-xl bg-white dark:bg-[#183127] hover:bg-rose-100 dark:hover:bg-[#234537] text-[#556961] dark:text-[#8EA89E] font-bold text-xs border border-rose-200 dark:border-rose-800 transition-colors cursor-pointer"
                   >
                     Cancel
                   </button>
@@ -279,7 +278,7 @@ export default function Settings() {
                 initial={{ opacity: 0, scale: 0.98 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0 }}
-                className="p-3.5 rounded-2xl bg-[#EBF7F2] border border-[#27B68C] text-[#1E6852] flex items-center justify-center gap-2 text-xs font-extrabold"
+                className="p-3.5 rounded-2xl bg-[#EBF7F2] dark:bg-[#1C382D] border border-[#27B68C] text-[#1E6852] dark:text-[#2DD4A3] flex items-center justify-center gap-2 text-xs font-extrabold"
               >
                 <Check className="w-4 h-4 stroke-[3]" />
                 <span>History cleared successfully</span>

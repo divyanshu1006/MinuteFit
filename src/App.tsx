@@ -23,15 +23,22 @@ function AppContent() {
     trackPageView(location.pathname)
   }, [location.pathname])
 
+  const pageTransition = {
+    initial: { opacity: 0, y: 6 },
+    animate: { opacity: 1, y: 0 },
+    exit: { opacity: 0, y: -6 },
+    transition: { duration: 0.22, ease: "easeOut" as const }
+  }
+
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen bg-[#F3F8F5] dark:bg-[#0B1A15] transition-colors duration-200">
       <div className="flex-1">
         <AnimatePresence mode="wait">
           <Routes location={location} key={location.pathname}>
             <Route 
               path="/" 
               element={
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                <motion.div {...pageTransition}>
                   <Home />
                 </motion.div>
               } 
@@ -39,7 +46,7 @@ function AppContent() {
             <Route 
               path="/workout" 
               element={
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                <motion.div {...pageTransition}>
                   <Workout />
                 </motion.div>
               } 
@@ -47,7 +54,7 @@ function AppContent() {
             <Route 
               path="/history" 
               element={
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                <motion.div {...pageTransition}>
                   <History />
                 </motion.div>
               } 
@@ -55,7 +62,7 @@ function AppContent() {
             <Route 
               path="/settings" 
               element={
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                <motion.div {...pageTransition}>
                   <Settings />
                 </motion.div>
               } 

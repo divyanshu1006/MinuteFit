@@ -57,7 +57,7 @@ export default function Logo({ size = 'md', showText = true, className = '' }: L
           <div className="flex items-center gap-1.5">
             <span className={`font-black tracking-widest uppercase text-[#27B68C] ${subSize}`}>MinuteFit</span>
             <span className="w-1 h-1 rounded-full bg-[#27B68C]" />
-            <span className={`font-bold text-[#68857B] tracking-wider uppercase ${subSize}`}>20 Min</span>
+            <span className={`font-bold text-[#68857B] dark:text-[#8EA89E] tracking-wider uppercase ${subSize}`}>20 Min</span>
           </div>
           <span className={`font-black text-[#143329] dark:text-white tracking-tight ${titleSize}`}>
             Workout Companion
