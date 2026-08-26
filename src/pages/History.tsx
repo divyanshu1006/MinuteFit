@@ -7,18 +7,21 @@ import {
   Trophy, 
   Flame, 
   ArrowRight, 
-  Zap
+  Zap,
+  Download,
+  Coffee
 } from 'lucide-react'
 import { useWorkoutHistory } from '@/hooks/useWorkoutHistory'
 import { useStreak } from '@/hooks/useStreak'
 import { formatDate, getLocalDateString } from '@/utils/dates'
+import { exportBackupFile } from '@/utils/backup'
 import Logo from '@/components/Logo'
 
 export default function History() {
   const navigate = useNavigate()
   const { getHistory, getTotalWorkouts, getTotalMinutes } = useWorkoutHistory()
   const history = getHistory()
-  const { currentStreak } = useStreak(history)
+  const { currentStreak, isRestDay } = useStreak(history)
   const totalWorkouts = getTotalWorkouts()
   const totalMinutes = getTotalMinutes()
 
@@ -31,7 +34,8 @@ export default function History() {
     const dayNumber = d.getDate()
     const hasWorkout = history.some(log => log.completed && (log.date === dateStr || getLocalDateString(new Date(log.timestamp)) === dateStr))
     const isToday = i === 6
-    return { dateStr, dayLabel, dayNumber, hasWorkout, isToday }
+    const isTodayRest = isToday && isRestDay && !hasWorkout
+    return { dateStr, dayLabel, dayNumber, hasWorkout, isToday, isTodayRest }
   })
 
   const containerVariants = {
@@ -53,7 +57,19 @@ export default function History() {
             <p className="text-[11px] font-bold tracking-widest uppercase text-[#68857B] dark:text-[#8EA89E]">Progress & Consistency</p>
             <h1 className="text-2xl sm:text-3xl font-black text-[#143329] dark:text-white tracking-tight">Workout History</h1>
           </div>
-          <Logo size="sm" showText={false} />
+          <div className="flex items-center gap-2">
+            {history.length > 0 && (
+              <button
+                onClick={exportBackupFile}
+                aria-label="Export backup file"
+                className="p-2 rounded-xl bg-white dark:bg-[#142A21] hover:bg-[#F0F8F4] dark:hover:bg-[#1C382D] text-[#27B68C] border border-[#D5EFE3] dark:border-[#234537] transition-all cursor-pointer shadow-2xs"
+                title="Export backup JSON"
+              >
+                <Download className="w-4 h-4" />
+              </button>
+            )}
+            <Logo size="sm" showText={false} />
+          </div>
         </div>
 
         {/* 3-Pillar Progress Summary */}
@@ -91,7 +107,7 @@ export default function History() {
               Last 7 Days
             </span>
             <span className="text-[11px] font-bold text-[#68857B] dark:text-[#8EA89E]">
-              Consistency Habit
+              3 Work : 1 Rest Cycle
             </span>
           </div>
 
@@ -102,6 +118,8 @@ export default function History() {
                 className={`flex flex-col items-center py-2 px-1 rounded-2xl border transition-all ${
                   d.hasWorkout 
                     ? 'bg-[#EAF7F1] dark:bg-[#1C382D] border-[#27B68C] text-[#143329] dark:text-white shadow-2xs' 
+                    : d.isTodayRest
+                    ? 'bg-[#F2FAF6] dark:bg-[#152C22] border-[#27B68C]/60 text-[#27B68C]'
                     : d.isToday
                     ? 'bg-white dark:bg-[#183127] border-[#27B68C]/50 text-[#68857B] dark:text-white'
                     : 'bg-[#F7FAF9] dark:bg-[#10221B] border-[#E8F2ED] dark:border-[#234537] text-[#8DA69D] dark:text-[#6C897E]'
@@ -111,11 +129,19 @@ export default function History() {
                 <div className={`w-7 h-7 rounded-full flex items-center justify-center mt-1.5 font-black text-xs ${
                   d.hasWorkout 
                     ? 'bg-[#27B68C] text-white shadow-2xs' 
+                    : d.isTodayRest
+                    ? 'bg-[#27B68C]/20 text-[#27B68C]'
                     : d.isToday
                     ? 'bg-[#E3EFE9] dark:bg-[#234537] text-[#143329] dark:text-white'
                     : 'text-[#68857B] dark:text-[#7A988D]'
                 }`}>
-                  {d.hasWorkout ? <Check className="w-3.5 h-3.5 stroke-[3]" /> : d.dayNumber}
+                  {d.hasWorkout ? (
+                    <Check className="w-3.5 h-3.5 stroke-[3]" />
+                  ) : d.isTodayRest ? (
+                    <Coffee className="w-3.5 h-3.5" />
+                  ) : (
+                    d.dayNumber
+                  )}
                 </div>
               </div>
             ))}

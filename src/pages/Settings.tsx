@@ -1,9 +1,10 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
 import { useSettings } from '@/hooks/useSettings'
 import { useWorkoutHistory } from '@/hooks/useWorkoutHistory'
 import { useSpeech } from '@/hooks/useSpeech'
 import { useSound } from '@/hooks/useSound'
+import { exportBackupFile, restoreBackupData } from '@/utils/backup'
 import { 
   Volume2, 
   Music, 
@@ -14,7 +15,12 @@ import {
   Play, 
   Check, 
   AlertTriangle,
-  Lock
+  Lock,
+  Download,
+  Upload,
+  Database,
+  Cloud,
+  FileCheck
 } from 'lucide-react'
 import Logo from '@/components/Logo'
 
@@ -48,13 +54,15 @@ function Toggle({
 
 export default function Settings() {
   const { settings, toggleVoice, toggleSound, updateSettings } = useSettings()
-  const { clearHistory } = useWorkoutHistory()
+  const { clearHistory, getHistory } = useWorkoutHistory()
   const { speak } = useSpeech(settings.voiceEnabled)
   const { playComplete } = useSound(settings.soundEnabled)
   
   const [resetState, setResetState] = useState<'idle' | 'confirm' | 'success'>('idle')
   const [testVoiceActive, setTestVoiceActive] = useState(false)
   const [testSoundActive, setTestSoundActive] = useState(false)
+  const [backupMessage, setBackupMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleTestVoice = () => {
     if (!settings.voiceEnabled) return
@@ -68,6 +76,45 @@ export default function Settings() {
     setTestSoundActive(true)
     playComplete()
     setTimeout(() => setTestSoundActive(false), 1200)
+  }
+
+  const handleExportBackup = () => {
+    try {
+      exportBackupFile()
+      setBackupMessage({ type: 'success', text: 'Backup downloaded! You can keep it on your device or save to Google Drive.' })
+      setTimeout(() => setBackupMessage(null), 5000)
+    } catch (e) {
+      setBackupMessage({ type: 'error', text: 'Failed to create backup file.' })
+      setTimeout(() => setBackupMessage(null), 5000)
+    }
+  }
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    const reader = new FileReader()
+    reader.onload = (event) => {
+      const content = event.target?.result as string
+      if (!content) return
+
+      const result = restoreBackupData(content)
+      if (result.success) {
+        setBackupMessage({ type: 'success', text: result.message })
+        // Trigger a reload or state refresh after short delay
+        setTimeout(() => {
+          window.location.reload()
+        }, 1200)
+      } else {
+        setBackupMessage({ type: 'error', text: result.message })
+        setTimeout(() => setBackupMessage(null), 5000)
+      }
+    }
+    reader.readAsText(file)
+    // Clear input so same file can be re-uploaded if needed
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ''
+    }
   }
 
   const handleResetClick = () => {
@@ -207,6 +254,72 @@ export default function Settings() {
               </button>
             ))}
           </div>
+        </div>
+
+        {/* Backup & Restore Card (No Sign-In Required) */}
+        <div className="rounded-[28px] bg-white dark:bg-[#142A21] p-5 border border-white/80 dark:border-[#234537] shadow-[0_10px_30px_rgba(20,55,42,0.04)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.25)] space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Database className="w-4 h-4 text-[#27B68C]" />
+              <span className="text-xs font-black uppercase tracking-wider text-[#143329] dark:text-white">
+                Data Backup & Restore
+              </span>
+            </div>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-[#27B68C] bg-[#EBF7F2] dark:bg-[#1C382D] px-2 py-0.5 rounded-full border border-[#D5EFE3] dark:border-[#2B5443]">
+              No Login Needed
+            </span>
+          </div>
+
+          <p className="text-xs text-[#597B6F] dark:text-[#8EA89E] leading-relaxed">
+            Download your workout logs and streaks as a JSON file. Store it locally on your phone/PC or upload it to Google Drive/iCloud for safe keeping.
+          </p>
+
+          {/* Action Buttons: Export & Import */}
+          <div className="grid grid-cols-2 gap-2.5">
+            <button
+              onClick={handleExportBackup}
+              className="py-3 px-3.5 rounded-2xl bg-[#EBF7F2] dark:bg-[#1C382D] hover:bg-[#DDF2E8] dark:hover:bg-[#234537] text-[#1E6852] dark:text-[#32D2A2] font-extrabold text-xs transition-all flex items-center justify-center gap-2 border border-[#CDEEE0] dark:border-[#2B5443] cursor-pointer shadow-xs"
+            >
+              <Download className="w-4 h-4" />
+              <span>Export Backup</span>
+            </button>
+
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              className="py-3 px-3.5 rounded-2xl bg-[#F6FAF8] dark:bg-[#10221B] hover:bg-[#EEF6F2] dark:hover:bg-[#183127] text-[#344E44] dark:text-[#C6E2D8] font-extrabold text-xs transition-all flex items-center justify-center gap-2 border border-[#E5EFEA] dark:border-[#234537] cursor-pointer shadow-xs"
+            >
+              <Upload className="w-4 h-4 text-[#27B68C]" />
+              <span>Import / Restore</span>
+            </button>
+
+            {/* Hidden file input */}
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileUpload}
+              accept=".json"
+              className="hidden"
+            />
+          </div>
+
+          {/* Feedback banner */}
+          <AnimatePresence>
+            {backupMessage && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                className={`p-3 rounded-xl text-xs font-semibold flex items-center gap-2 ${
+                  backupMessage.type === 'success'
+                    ? 'bg-[#EBF7F2] dark:bg-[#1C382D] text-[#1E6852] dark:text-[#32D2A2] border border-[#27B68C]/40'
+                    : 'bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800'
+                }`}
+              >
+                {backupMessage.type === 'success' ? <FileCheck className="w-4 h-4 shrink-0" /> : <AlertTriangle className="w-4 h-4 shrink-0" />}
+                <span>{backupMessage.text}</span>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
         {/* Privacy & Storage Guarantee Card */}

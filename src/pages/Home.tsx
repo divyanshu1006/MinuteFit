@@ -16,7 +16,10 @@ import {
   Timer, 
   ShieldCheck, 
   ChevronRight,
-  Info
+  Info,
+  HeartPulse,
+  Coffee,
+  CheckCircle2
 } from 'lucide-react'
 import Logo from '@/components/Logo'
 
@@ -24,7 +27,7 @@ export default function Home() {
   const navigate = useNavigate()
   const { getHistory, getTotalWorkouts, getLastWorkout } = useWorkoutHistory()
   const history = getHistory()
-  const { currentStreak } = useStreak(history)
+  const { currentStreak, isRestDay, cycleDay, consecutiveWorkoutsInCurrentBlock } = useStreak(history)
   const lastWorkout = getLastWorkout()
   const totalWorkouts = getTotalWorkouts()
   const [selectedExerciseIndex, setSelectedExerciseIndex] = useState<number | null>(null)
@@ -82,37 +85,80 @@ export default function Home() {
           <div className="md:col-span-6 flex flex-col space-y-5 sm:space-y-6">
             
             <motion.div variants={itemVariants} className="space-y-2.5">
+              {/* 4-Day Rhythm Badge (3 Days On, 1 Day Rest) */}
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/90 dark:bg-[#142A21]/90 backdrop-blur-md border border-[#D5EFE3] dark:border-[#234537] text-xs font-bold text-[#27B68C] shadow-xs">
-                <Sparkles className="w-3.5 h-3.5" />
-                <span>Zero Guesswork • Fixed Daily Routine</span>
+                {isRestDay ? (
+                  <>
+                    <Coffee className="w-3.5 h-3.5 text-[#27B68C]" />
+                    <span>Day 4 • Scheduled Rest & Recovery</span>
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="w-3.5 h-3.5" />
+                    <span>Day {cycleDay} of 4 • 3 Days Work, 1 Day Rest</span>
+                  </>
+                )}
               </div>
 
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-[#143329] dark:text-white tracking-tight leading-[1.12]">
-                20 Minutes.<br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#1E4D3E] via-[#27B68C] to-[#1E4D3E] dark:from-[#2DD4A3] dark:via-[#27B68C] dark:to-[#4EF0C1]">
-                  Full Body Power.
-                </span>
-              </h1>
+              {isRestDay ? (
+                <>
+                  <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-[#143329] dark:text-white tracking-tight leading-[1.12]">
+                    3 Days Done.<br />
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#27B68C] via-[#2DD4A3] to-[#27B68C]">
+                      Recovery Day.
+                    </span>
+                  </h1>
 
-              <p className="text-sm sm:text-base text-[#5E7A71] dark:text-[#94B3A8] font-medium leading-relaxed max-w-lg">
-                5 proven bodyweight movements across 4 continuous rounds. Just press start — spoken voice guidance lets you focus completely on your form without watching the screen.
-              </p>
+                  <p className="text-sm sm:text-base text-[#5E7A71] dark:text-[#94B3A8] font-medium leading-relaxed max-w-lg">
+                    You crushed 3 consecutive workout days! Muscles rebuild and grow during recovery. Take today off to recharge — your streak remains 100% active and protected.
+                  </p>
+                </>
+              ) : (
+                <>
+                  <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-[#143329] dark:text-white tracking-tight leading-[1.12]">
+                    20 Minutes.<br />
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#1E4D3E] via-[#27B68C] to-[#1E4D3E] dark:from-[#2DD4A3] dark:via-[#27B68C] dark:to-[#4EF0C1]">
+                      Full Body Power.
+                    </span>
+                  </h1>
+
+                  <p className="text-sm sm:text-base text-[#5E7A71] dark:text-[#94B3A8] font-medium leading-relaxed max-w-lg">
+                    5 proven bodyweight movements across 4 continuous rounds. Just press start — spoken voice guidance lets you focus completely on your form without watching the screen.
+                  </p>
+                </>
+              )}
             </motion.div>
 
             {/* Primary Action Section */}
             <motion.div variants={itemVariants} className="pt-1 flex flex-col gap-3">
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => navigate('/workout')}
-                className="w-full py-4.5 px-8 rounded-full bg-[#27B68C] hover:bg-[#20A07A] text-white font-black text-lg shadow-[0_14px_32px_rgba(39,182,140,0.38)] transition-all flex items-center justify-center gap-3 group cursor-pointer"
-                aria-label="Start 20-minute daily workout"
-              >
-                <span>START 20-MIN WORKOUT</span>
-                <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center group-hover:translate-x-1 transition-transform">
-                  <ArrowRight className="w-4 h-4 text-white stroke-[3]" />
+              {isRestDay ? (
+                <div className="space-y-2.5">
+                  <div className="w-full py-4.5 px-6 rounded-3xl bg-[#EBF7F2] dark:bg-[#152E24] border border-[#CDEEE0] dark:border-[#234F3C] text-[#1E6852] dark:text-[#32D2A2] flex items-center justify-center gap-3 shadow-xs">
+                    <CheckCircle2 className="w-5 h-5 text-[#27B68C] shrink-0" />
+                    <span className="font-extrabold text-sm sm:text-base">Enjoy your rest day! Streak is safe.</span>
+                  </div>
+
+                  <button
+                    onClick={() => navigate('/workout')}
+                    className="w-full py-3 px-4 rounded-full bg-white dark:bg-[#142A21] hover:bg-[#F2FAF6] dark:hover:bg-[#183429] text-[#27B68C] font-bold text-xs uppercase tracking-wider border border-[#D5EFE3] dark:border-[#234537] transition-all cursor-pointer text-center"
+                  >
+                    Want to train anyway? Start Workout
+                  </button>
                 </div>
-              </motion.button>
+              ) : (
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => navigate('/workout')}
+                  className="w-full py-4.5 px-8 rounded-full bg-[#27B68C] hover:bg-[#20A07A] text-white font-black text-lg shadow-[0_14px_32px_rgba(39,182,140,0.38)] transition-all flex items-center justify-center gap-3 group cursor-pointer"
+                  aria-label="Start 20-minute daily workout"
+                >
+                  <span>START 20-MIN WORKOUT</span>
+                  <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center group-hover:translate-x-1 transition-transform">
+                    <ArrowRight className="w-4 h-4 text-white stroke-[3]" />
+                  </div>
+                </motion.button>
+              )}
 
               {/* Psychological Friction Reducers */}
               <div className="grid grid-cols-3 gap-2 text-center pt-1">
@@ -125,8 +171,8 @@ export default function Home() {
                   <span>40s / 20s Rest</span>
                 </div>
                 <div className="flex items-center justify-center gap-1 text-[11px] font-semibold text-[#5B7B70] dark:text-[#8EA89E]">
-                  <ShieldCheck className="w-3.5 h-3.5 text-[#27B68C] shrink-0" />
-                  <span>Pause Anytime</span>
+                  <HeartPulse className="w-3.5 h-3.5 text-[#27B68C] shrink-0" />
+                  <span>3 Work : 1 Rest</span>
                 </div>
               </div>
             </motion.div>
